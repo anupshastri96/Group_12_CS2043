@@ -1,3 +1,5 @@
+//Creates a few objects directly from the database
+
 package database_testing;
 
 import java.sql.Connection;
