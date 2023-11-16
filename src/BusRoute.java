@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class BusRoute {
 
 	private int id;
-	private int currentStopId;
+	private int currentStopIndex;
 	private Bus bus;
 	private Route route;
 	private Timestamp departureTime;
@@ -37,14 +37,14 @@ public class BusRoute {
 	}
 	
 	public Stop getCurrentStop() {
-		return route.getStops().get(currentStopId);
+		return route.getStops().get(currentStopIndex);
 	}
 	
-	public void setCurrentStopId(int stopId) throws IllegalArgumentException {
+	public void setCurrentStopId(int stopIndex) throws IllegalArgumentException {
 		if (id >= route.getStops().size()) {
 			throw new IllegalArgumentException("Stop ID outside range of Stops on this Route");
 		} else {
-			currentStopId = stopId;
+			currentStopIndex = stopIndex;
 		}
 	}
 	
