@@ -4,6 +4,6 @@
 /**
  * 
  */
-module jdbctest {
+module miniproject {
 	requires java.sql;
 }

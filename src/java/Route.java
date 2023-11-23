@@ -1,4 +1,4 @@
-package database_testing;
+package miniproject;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

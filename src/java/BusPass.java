@@ -1,4 +1,4 @@
-package database_testing;
+package miniproject;
 
 public class BusPass extends PaymentMethod{
 
