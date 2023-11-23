@@ -77,9 +77,9 @@ public class BusRoute {
 	}
 	
 	private boolean isLate(Timestamp currentTime) {
-		if (currentStopId + 1 < route.getStops().size()) {
+		if (currentStopIndex + 1 < route.getStops().size()) {
 			Timestamp lateTime = new Timestamp(departureTime.getTime());
-			Stop nextStop = route.getStops().get(currentStopId + 1);
+			Stop nextStop = route.getStops().get(currentStopIndex + 1);
 			lateTime.setMinutes(lateTime.getMinutes() + nextStop.getExpectedArrivalTime() + LATE_BUFFER);
 			return currentTime.compareTo(lateTime) > 0;
 		} else {
