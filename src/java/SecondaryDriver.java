@@ -9,7 +9,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import static org.junit.Assert.fail;
 
-public class Secondary_Driver {
+public class SecondaryDriver {
 
     public static void main(String[] args) {
         Connection connection = initializeDatabaseConnection();
@@ -122,7 +122,7 @@ The initializeBusRoutes method retrieves data from the "bus_route" table in the 
 For each row in the result set, it creates a BusRoute object using the constructor that takes a busRouteId and a Connection as parameters.
 The BusRoute objects are added to a list (busRoutes), which is returned.
 
-UpdateTask Class:This is a nested class within Secondary_Driver that extends TimerTask.
+UpdateTask Class:This is a nested class within SecondaryDriver that extends TimerTask.
 It has a constructor that takes a busRouteId and a Connection.
 The run method is where the logic for updating the current stop index for a bus route is implemented.
 It creates a BusRoute object using the provided busRouteId and Connection.
