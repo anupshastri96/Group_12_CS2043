@@ -2,17 +2,21 @@ package miniproject;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class TestDriver {
 
+    private static Connection connection;
+
     public static void main(String[] args) {
-        try{
+        try {
             connection = DriverManager.getConnection("jdbc:mysql://sql9.freesqldatabase.com:3306/sql9657484", "sql9657484", "e8X5f44Fl9");
+            runSimulation(connection);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -34,7 +38,7 @@ public class TestDriver {
     }
 
     private static BusRoute[] createSampleRoutes(Connection connection) {
-        BusRoute[] routes = new BusRoute[9]; //Total of 9 routes 
+        BusRoute[] routes = new BusRoute[9]; // Total of 9 routes
 
         // Create and add routes to the array
         for (int i = 0; i < 9; i++) {
@@ -68,7 +72,7 @@ public class TestDriver {
     }
 
     private static Passenger createNewPassenger(BusRoute route, Connection connection) {
-        //New passenger is created with a boarded stop being the current stop and a random payment method
+        // New passenger is created with a boarded stop being the current stop and a random payment method
         int passengerId = 0; // Assign a unique passenger ID based on your logic
         Stop boardedStop = route.getCurrentStop();
         Stop departedStop = null; // Passenger has not departed yet
@@ -78,8 +82,27 @@ public class TestDriver {
     }
 
     private static PaymentMethod getRandomPaymentMethod(Connection connection) {
-        //Add our db payment menthod retrival logic here 
-        int randomMethodId = 1; // Replace with our logic to get a random payment method ID
-        return new PaymentMethod(connection, randomMethodId);
+        try {
+            // Query to retrieve a random payment method from the database
+            String query = "SELECT * FROM payment_method ORDER BY RAND() LIMIT 1";
+
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query);
+                 ResultSet resultSet = preparedStatement.executeQuery()) {
+
+                if (resultSet.next()) {
+                    int methodId = resultSet.getInt("method_id");
+                    String methodName = resultSet.getString("method_name");
+                    double methodPrice = resultSet.getDouble("method_price");
+
+                    // Create and return a PaymentMethod object
+                    return new PaymentMethod(methodId, methodName, methodPrice);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Return a default PaymentMethod if an error occurs or no records are found
+        return new PaymentMethod(0, "Default Method", 0.0);
     }
 }
