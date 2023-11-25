@@ -54,9 +54,6 @@ public class Secondary_Driver {
 
     return busRoutes;
 }
-
-
-    // UpdateTask class
     static class UpdateTask extends TimerTask {
         private int busRouteId;
         private Connection connection;
@@ -66,36 +63,35 @@ public class Secondary_Driver {
             this.connection = connection;
         }
 
-        @Override
-        public void run() {
-            // Implement the logic to update the current stop ID for the specified bus route
-            // You may need to handle cases where the current stop is the last stop on the route
+    @Override
+    public void run() {
+        // Implemented the logic to update the current stop index for the bus route
+        BusRoute busRoute = new BusRoute(busRouteId, connection);
+        int currentStopIndex = busRoute.getCurrentStopIndex();
+        int lastStopIndex = busRoute.getRoute().getStops().size() - 1;
 
-            BusRoute busRoute = new BusRoute(busRouteId, connection);
-            int currentStopIndex = busRoute.getCurrentStopIndex();
+        //update the current stop ID
+        int newStopIndex = (currentStopIndex < lastStopIndex) ? currentStopIndex + 1 : 0;
 
-            // Logic to update the current stop ID (you may need to handle edge cases)
-            int newStopIndex = currentStopIndex + 1;
+        try {
+            String updateQuery = "UPDATE bus_route SET current_stop_index = ? WHERE bus_route_id = ?"; //updating the current stop ID in the database
+            try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+                preparedStatement.setInt(1, newStopIndex);
+                preparedStatement.setInt(2, busRouteId);
 
-            try {
-                // Update the current stop ID in the database
-                String updateQuery = "UPDATE bus_route SET current_stop_index = ? WHERE bus_route_id = ?";
-                try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
-                    preparedStatement.setInt(1, newStopIndex);
-                    preparedStatement.setInt(2, busRouteId);
+                int rowsAffected = preparedStatement.executeUpdate();
 
-                    int rowsAffected = preparedStatement.executeUpdate();
-
-                    if (rowsAffected > 0) {
-                        System.out.println("Current stop index updated successfully for Bus Route " + busRouteId);
-                    } else {
-                        System.out.println("Failed to update current stop index for Bus Route " + busRouteId);
-                    }
+                if (rowsAffected > 0) {
+                    System.out.println("Current stop index updated successfully for Bus Route " + busRouteId);
+                } else {
+                    System.out.println("Failed to update current stop index for Bus Route " + busRouteId);
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+    }
+
     }
 }
 
