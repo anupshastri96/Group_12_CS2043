@@ -83,7 +83,6 @@ public class TestDriver {
 
     private static PaymentMethod getRandomPaymentMethod(Connection connection) {
         try {
-            // Query to retrieve a random payment method from the database
             String query = "SELECT * FROM payment_method ORDER BY RAND() LIMIT 1";
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -102,7 +101,7 @@ public class TestDriver {
             e.printStackTrace();
         }
 
-        // Return a default PaymentMethod if an error occurs or no records are found
+        //returns a default PaymentcMethod if an error occurs or no records are found
         return new PaymentMethod(0, "Default Method", 0.0);
     }
 }
