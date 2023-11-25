@@ -11,7 +11,6 @@ import java.util.TimerTask;
 public class TestDriver {
 
     public static void main(String[] args) {
-        // Connect to the database
         try{
             connection = DriverManager.getConnection("jdbc:mysql://sql9.freesqldatabase.com:3306/sql9657484", "sql9657484", "e8X5f44Fl9");
         } catch (SQLException e) {
