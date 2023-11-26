@@ -1,6 +1,7 @@
 package miniproject;
 
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,14 +28,44 @@ public class TestDriver {
         BusRoute[] routes = createSampleRoutes(connection);
 
         // Set up a timer to simulate updates
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
+        Timer simulationTimer = new Timer();
+        simulationTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 // Simulate route progression and new passengers
                 updateRoutes(routes, connection);
             }
         }, 0, 30000); // Update every 30 seconds
+
+        // Set up a timer to clean up after a minute
+        Timer cleanupTimer = new Timer();
+        cleanupTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // Clean up added stops and passengers
+                cleanupRoutes(routes, connection);
+                
+                // Cancel the simulation timer after cleanup
+                simulationTimer.cancel();
+                cleanupTimer.cancel();
+            }
+        }, 60000); // Cleanup after 1 minute
+    }
+
+    private static void cleanupRoutes(BusRoute[] routes, Connection connection) {
+        for (BusRoute route : routes) {
+            // Identify the new passengers
+            ArrayList<Passenger> newPassengers = new ArrayList<>();
+            for (Passenger passenger : route.getPassengers()) {
+                if (passenger.isNewlyAdded()) {
+                    newPassengers.add(passenger);
+                }
+            }
+    
+            // Remove only the new passengers
+            route.getPassengers().removeAll(newPassengers);
+            route.setCurrentStopId(0);
+        }
     }
 
     private static BusRoute[] createSampleRoutes(Connection connection) {
