@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
+import javafx.scene.paint.Stop;
+
 public class BusRoute {
 
     private int id;
@@ -28,6 +30,29 @@ public class BusRoute {
         this.route = route;
         this.passengers = new ArrayList<>(); // Initialize the passenger list
     }
+
+	public BusRoute(int ID, Bus bus, Route route, Timestamp departureTime, Connection connection) {
+        this.id = ID;
+        this.bus = bus;
+        this.route = route;
+        this.passengers = new ArrayList<>(); // Initialize the passenger list
+
+        // Push the variables to the database
+        String insertQuery = "INSERT INTO bus_route (bus_id, route_id) VALUES (?, ?)";
+        try (PreparedStatement insertStatement = connection.prepareStatement(insertQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            insertStatement.setInt(1, bus.getId());
+            insertStatement.setInt(2, route.getId());
+
+            int rowsAffected = insertStatement.executeUpdate();
+            if (rowsAffected <= 0) {
+                throw new SQLException("Failed to insert bus route into the database.");
+                }
+        }
+		catch (SQLException e) {
+            e.printStackTrace(); // Handle the exception 
+        }
+	}
+
 
  // Database constructor
     public BusRoute(int busRouteId, Connection connection) {
@@ -115,6 +140,28 @@ public class BusRoute {
 	public void addPassenger(Passenger p) {
 		passengers.add(p);
 	}
+
+	public void addPassenger(Passenger passenger, Connection connection) {
+        // Add the passenger to the local list
+        passengers.add(passenger);
+
+        // Add the passenger to the database
+        String addPassengerQuery = "INSERT INTO bus_route_passenger (bus_route_id, passenger_id) VALUES (?, ?)";
+        try (PreparedStatement addPassengerStatement = connection.prepareStatement(addPassengerQuery)) {
+            addPassengerStatement.setInt(1, this.id);
+            addPassengerStatement.setInt(2, passenger.getId());
+
+            int rowsAffected = addPassengerStatement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("Passenger added to the database successfully.");
+            } else {
+                System.out.println("Failed to add passenger to the database.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle the exception
+        }
+    }
 	
 	public String getOnTimeStatus() {
 		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
