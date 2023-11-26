@@ -1,7 +1,7 @@
-package miniproject;
+package jUnit;
  
 import static org.junit.jupiter.api.Assertions.*;
- 
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -9,6 +9,9 @@ import java.sql.SQLException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import classes.Bus;
+import classes.Driver;
  
 class BusTest {
  

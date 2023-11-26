@@ -1,4 +1,4 @@
-package miniproject;
+package classes;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -40,6 +40,7 @@ public class BusRoute {
             if (routeResultSet.next()) {
                 // Extract bus route information from the result set
                 this.id = routeResultSet.getInt("bus_route_id");
+                this.departureTime = routeResultSet.getTimestamp("depart_time");
                 int routeId = routeResultSet.getInt("route_id");
 
                 // Create and set the Route object using another method to retrieve route details
@@ -84,6 +85,10 @@ public class BusRoute {
 		return bus;
 	}
 	
+	public void setBus(Bus bus) {
+		this.bus = bus;
+	}
+	
 	public Route getRoute() {
 		return route;
 	}
@@ -92,7 +97,11 @@ public class BusRoute {
 		return route.getStops().get(currentStopIndex);
 	}
 	
-	public void setCurrentStopId(int stopIndex) throws IllegalArgumentException {
+	public int getCurrentStopIndex() {
+		return currentStopIndex;
+	}
+	
+	public void setCurrentStopIndex(int stopIndex) throws IllegalArgumentException {
 		if (id >= route.getStops().size()) {
 			throw new IllegalArgumentException("Stop ID outside range of Stops on this Route");
 		} else {
