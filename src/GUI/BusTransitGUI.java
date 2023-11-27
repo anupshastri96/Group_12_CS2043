@@ -1,115 +1,142 @@
-package miniproject;
+package GUI;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.*;
+import javafx.scene.paint.Color;
 import javafx.geometry.*;	
-import javafx.event.ActionEvent; 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.ArrayList;
+
+import classes.BusRoute;
+import classes.Stop;
+
+import javafx.util.Duration;
+import util.GUIUtil;
+
+import java.sql.Date;
+import java.sql.Timestamp;
 
 public class BusTransitGUI extends Application {
-    private static final int UPDATE_INTERVAL = 5000; // Update every 5 seconds
+
+	private static final int UPDATE_INTERVAL = 5;
+	
+	private Date date;
+	private HBox mainLayout;
+	private VBox leftPanel;
+	private VBox rightPanel;
+	private String defaultRouteLabel = "Route: ";
+	private String defaultDriverLabel = "Driver: ";
+	private String defaultDepartedLabel = "Departed: ";
+	private String defaultStatusLabel = "Status: ";
+	
 
     @Override
     public void start(Stage primaryStage) {
+    	GUIUtil guiUtil = new GUIUtil();
+    	
         primaryStage.setTitle("Bus Transit Management");
+        mainLayout = new HBox();
+        
+        leftPanel = new VBox();
+        leftPanel.setAlignment(Pos.TOP_CENTER);
+        leftPanel.setStyle("-fx-border-color: black;");
+        leftPanel.setSpacing(5);
+        mainLayout.getChildren().add(leftPanel);
+        HBox.setHgrow(leftPanel, Priority.ALWAYS);
+        
+        rightPanel = new VBox();
+        rightPanel.setStyle("-fx-border-color: black;");
+        rightPanel.setSpacing(20);
+        rightPanel.setPrefWidth(200);
+        mainLayout.getChildren().add(rightPanel);
+        
+        date = new Date((new Timestamp(System.currentTimeMillis()).getTime()));
+        leftPanel.getChildren().add(new Label(date.toString()));
+        
+        // Add default label strings to UI
+        rightPanel.getChildren().add(new Label(defaultRouteLabel));
+        rightPanel.getChildren().add(new Label(defaultDriverLabel));
+        rightPanel.getChildren().add(new Label(defaultDepartedLabel));
+        rightPanel.getChildren().add(new Label(defaultStatusLabel));
 
-        // Create a VBox for the main layout
-        VBox mainLayout = new VBox();
-        mainLayout.setAlignment(Pos.CENTER);
-        mainLayout.setSpacing(20);
-
-        // Create and add a label for Date & Time
-        Label dateTimeLabel = new Label("Date & Time");
-        mainLayout.getChildren().add(dateTimeLabel);
-
-        // Create instances of existing classes - develop further
-        BusRoute route1 = createSampleRoute("Bus Route 1", "Driver A", "Stop 1", "Stop 2", "Stop 3");
-        BusRoute route2 = createSampleRoute("Bus Route 2", "Driver B", "Stop 1", "Stop 2", "Stop 3");
-
-        // Create and add UI components for each bus route
-        addBusRouteUI(mainLayout, route1);
-        addBusRouteUI(mainLayout, route2);
-
-        // Set up the scene
-        Scene scene = new Scene(mainLayout, 600, 400);
+        // Set up the scene and show the stage
+        Scene scene = new Scene(mainLayout, 700, 500);
         primaryStage.setScene(scene);
-
-        // Show the stage
         primaryStage.show();
-
-        // Set up a timer to simulate route updates
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                // Update the UI (simulate route progression)
-                updateRouteUI(route1);
-                updateRouteUI(route2);
-            }
-        }, 0, UPDATE_INTERVAL);
+        
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(UPDATE_INTERVAL), event -> {
+        	ArrayList<BusRoute> newBusRoutes = guiUtil.getBusRoutes(date);
+        	if (guiUtil.updates(newBusRoutes)) {
+        		updateBusRoutes(newBusRoutes);
+        	}
+        }));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
     }
 
-    private BusRoute createSampleRoute(String title, String driverName, String... stopNames) {
-        Driver driver = new Driver(driverName);
-        Stop[] stops = new Stop[stopNames.length];
-        for (int i = 0; i < stopNames.length; i++) {
-            stops[i] = new Stop(stopNames[i]);
-        }
-        return new BusRoute(title, driver, stops);
+    int i = 0;
+    
+    public void updateBusRoutes(ArrayList<BusRoute> updatedBusRoutes) {
+	   	
+	   	if(leftPanel != null) {
+	    	leftPanel.getChildren().clear();
+	    	leftPanel.getChildren().add(new Label(date.toString()));
+	   	}
+		
+	   	for (BusRoute busRoute : updatedBusRoutes) {
+	   		// Create and add a label for the bus route title
+	   		Hyperlink routeTitleLabel = new Hyperlink(busRoute.getRoute().getName());
+	   		routeTitleLabel.setOnAction(new EventHandler<ActionEvent>() {
+	   		    @Override
+	   		    public void handle(ActionEvent e) {
+	   		        updateSideMenu(busRoute);
+	   		    }
+	   		});
+	   		
+	   		leftPanel.getChildren().add(routeTitleLabel);
+	
+	   		// Create an HBox for the stops in the route
+	   		HBox stopsLayout = new HBox();
+	   		stopsLayout.setAlignment(Pos.CENTER);
+	   		stopsLayout.setSpacing(10);
+	   		
+	   		// Create and add labels for each stop in the route
+	   		for (int i = 0; i < busRoute.getRoute().getStops().size(); i++) {
+	   			Stop stop = busRoute.getRoute().getStops().get(i);
+	   			Label stopLabel = new Label(stop.getLocation());
+	   			if(busRoute.getCurrentStop().equals(stop)) {
+	   				stopLabel.setTextFill(Color.BLUE);
+	   			}
+	   			stopsLayout.getChildren().add(stopLabel);
+	   			if (i < busRoute.getRoute().getStops().size() - 1) {
+	   				Label hLine = new Label("―――");
+	   				stopsLayout.getChildren().add(hLine);
+	   			}
+	   			
+	   		}
+	   		leftPanel.getChildren().add(stopsLayout);
+    	}
     }
 
-    private void addBusRouteUI(VBox mainLayout, BusRoute route) {
-        // Create an HBox for each bus route
-        HBox routeLayout = new HBox();
-        routeLayout.setAlignment(Pos.CENTER);
-        routeLayout.setSpacing(10);
-
-        // Create and add a label for the bus route title
-        Label routeTitleLabel = new Label(route.getTitle());
-        routeLayout.getChildren().add(routeTitleLabel);
-
-        // Create a toggle group for radio buttons
-        ToggleGroup toggleGroup = new ToggleGroup();
-
-        // Create and add radio buttons for each stop in the route
-        for (Stop stop : route.getStops()) {
-            RadioButton radioButton = new RadioButton(stop.getName());
-            radioButton.setToggleGroup(toggleGroup);
-            routeLayout.getChildren().add(radioButton);
-        }
-
-        // Add the route layout to the main layout
-        mainLayout.getChildren().add(routeLayout);
-
-        // Set up an event handler for clicking on the route title
-        routeTitleLabel.setOnMouseClicked(event -> {
-            // Show side menu with route information (develop further) 
-            showSideMenu(route);
-        });
-    }
-
-    private void showSideMenu(BusRoute route) {
-        // Develop further to show a side menu
-        System.out.println("Bus Route Title: " + route.getTitle());
-        System.out.println("Driver: " + route.getDriver().getName());
-        System.out.println("Departed: " + route.getDepartedTime());
-        System.out.println("Status: " + route.getStatus());
-    }
-
-    private void updateRouteUI(BusRoute route) {
-        // Simulate updating the route UI (develop further)
-        System.out.println("Updating route: " + route.getTitle());
+    private void updateSideMenu(BusRoute busRoute) {
+    	rightPanel.getChildren().clear();
+        rightPanel.getChildren().add(new Label(defaultRouteLabel + " " + busRoute.getRoute().getName()));
+        rightPanel.getChildren().add(new Label(defaultDriverLabel + " " + busRoute.getBus().getDriver().getName()));
+        rightPanel.getChildren().add(new Label(defaultDepartedLabel + " " + busRoute.getDepartureTime()));
+        rightPanel.getChildren().add(new Label(defaultStatusLabel + " " + busRoute.getOnTimeStatus()));
+    	
     }
 
     public static void main(String[] args) {
         launch(args);
-        //instances of other classes
     }
 
 }

@@ -1,4 +1,4 @@
-package miniproject;
+package classes;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,6 +14,28 @@ public class Driver {
         this.id = id;
         this.name = name;
         this.salary = salary;
+    }
+
+    public Driver(int id, String name, double salary, Connection connection) {
+        this.id = id;
+        this.name = name;
+        this.salary = salary;
+        // Push the driver variables to the database
+        String updateDriverQuery = "INSERT INTO driver (driver_id, driver_name, driver_salary) VALUES (?, ?, ?)";
+        try (PreparedStatement updateDriverStatement = connection.prepareStatement(updateDriverQuery)) {
+            updateDriverStatement.setInt(1, id);
+            updateDriverStatement.setString(2, name);
+            updateDriverStatement.setDouble(3, salary);
+
+            int rowsAffected = updateDriverStatement.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Driver added successfully to the database.");
+            } else {
+                System.out.println("Failed to insert driver into the database.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle the exception
+        }
     }
 
     // Database constructor

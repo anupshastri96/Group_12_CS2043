@@ -1,4 +1,4 @@
-package miniproject;
+package classes;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,6 +12,30 @@ public class Bus {
     public Bus(int id, Driver driver) {
         this.id = id;
         this.driver = driver;
+    }
+
+    public Bus(Driver driver, int busId, Connection connection) {
+        this.driver = driver;
+        this.id = busId;
+    
+        // Insert or update the Bus object in the database
+        String query = "INSERT INTO bus (bus_id, driver_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE driver_id = ?";
+    
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, busId);
+            preparedStatement.setInt(2, driver.getId());
+            preparedStatement.setInt(3, driver.getId());
+    
+            int rowsAffected = preparedStatement.executeUpdate();
+    
+            if (rowsAffected > 0) {
+                System.out.println("Bus object successfully inserted or updated in the database with ID: " + this.id);
+            } else {
+                System.out.println("Failed to insert or update Bus object in the database.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle the exception 
+        }
     }
     
     public Bus(Driver driver, Connection connection) {

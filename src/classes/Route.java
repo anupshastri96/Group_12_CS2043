@@ -1,4 +1,4 @@
-package miniproject;
+package classes;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,6 +15,49 @@ public class Route {
         this.id = id;
         this.name = name;
         this.stops = stops;
+    }
+
+    public Route(Connection connection, int routeId, String routeName, ArrayList<Stop> stops) {
+        // Add the route to the local object
+        this.id = routeId;
+        this.name = routeName;
+        this.stops = stops;
+
+        // Add the route to the database
+        String addRouteQuery = "INSERT INTO route (route_id, route_name) VALUES (?, ?)";
+        try (PreparedStatement addRouteStatement = connection.prepareStatement(addRouteQuery)) {
+            addRouteStatement.setInt(1, routeId);
+            addRouteStatement.setString(2, routeName);
+
+            int rowsAffected = addRouteStatement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("Route added to the database successfully.");
+            } else {
+                System.out.println("Failed to add route to the database.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle the exception
+        }
+
+        // Add stops to the route_stop table
+        for (Stop stop : stops) {
+            String addStopToRouteQuery = "INSERT INTO route_stop (route_id, stop_id) VALUES (?, ?)";
+            try (PreparedStatement addStopToRouteStatement = connection.prepareStatement(addStopToRouteQuery)) {
+                addStopToRouteStatement.setInt(1, routeId);
+                addStopToRouteStatement.setInt(2, stop.getId());
+
+                int stopRowsAffected = addStopToRouteStatement.executeUpdate();
+
+                if (stopRowsAffected > 0) {
+                    System.out.println("Stop added to the route in the database successfully.");
+                } else {
+                    System.out.println("Failed to add stop to the route in the database.");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace(); // Handle the exception
+            }
+        }
     }
 
     // Database constructor

@@ -1,4 +1,4 @@
-package miniproject;
+package classes;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,6 +14,29 @@ public class PaymentMethod {
         this.id = id;
         this.type = type;
         this.price = price;
+    }
+
+    public PaymentMethod(Connection connection, int id, String type, double price) {
+        this.id = id;
+        this.type = type;
+        this.price = price;
+
+        // Push the PaymentMethod variables to the database
+        String updatePaymentMethodQuery = "INSERT INTO payment_method (method_id, method_name, method_price) VALUES (?, ?, ?)";
+        try (PreparedStatement updatePaymentMethodStatement = connection.prepareStatement(updatePaymentMethodQuery)) {
+            updatePaymentMethodStatement.setInt(1, id);
+            updatePaymentMethodStatement.setString(2, type);
+            updatePaymentMethodStatement.setDouble(3, price);
+
+            int rowsAffected = updatePaymentMethodStatement.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("PaymentMethod added successfully to the database.");
+            } else {
+                System.out.println("Failed to insert PaymentMethod into the database.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle the exception
+        }
     }
  
     public PaymentMethod(Connection connection, int method_id) {

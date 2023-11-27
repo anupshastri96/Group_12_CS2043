@@ -1,4 +1,4 @@
-package miniproject;
+package classes;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,6 +16,31 @@ public class Stop {
         this.location = location;
         this.expectedArrivalTime = expectedArrivalTime;
         
+    }
+
+    public Stop(Connection connection, int stopId, String location, int expectedArrivalTime) {
+        // Add the stop to the local object
+        this.id = stopId;
+        this.location = location;
+        this.expectedArrivalTime = expectedArrivalTime;
+
+        // Add the stop to the database
+        String addStopQuery = "INSERT INTO stop (stop_id, stop_location, arrival_time) VALUES (?, ?, ?)";
+        try (PreparedStatement addStopStatement = connection.prepareStatement(addStopQuery)) {
+            addStopStatement.setInt(1, stopId);
+            addStopStatement.setString(2, location);
+            addStopStatement.setInt(3, expectedArrivalTime);
+
+            int rowsAffected = addStopStatement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("Stop added to the database successfully.");
+            } else {
+                System.out.println("Failed to add stop to the database.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle the exception
+        }
     }
     
  // Constructor that accesses the database directly
