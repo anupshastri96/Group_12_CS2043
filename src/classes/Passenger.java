@@ -1,11 +1,9 @@
-package miniproject;
+package classes;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import javafx.scene.paint.Stop;
 
 
 
@@ -22,31 +20,31 @@ public class Passenger {
         this.paymentMethod = paymentMethod;
     }
 
-     public Passenger(int id, Stop boardedStop, Stop departedStop, PaymentMethod paymentMethod, Connection connection) {
-       this.id = id;
-        this.boardedStop = boardedStop;
-        this.departedStop = departedStop;
-        this.paymentMethod = paymentMethod;
-
-        // Push the passenger variables to the database
-        String updatePassengerQuery = "INSERT INTO passenger (passenger_id, boarded_stop, departed_stop, payment_method) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement updatePassengerStatement = connection.prepareStatement(updatePassengerQuery)) {
-            updatePassengerStatement.setInt(1, id);
-            updatePassengerStatement.setInt(2, boardedStop != null ? boardedStop.getId() : 0);
-            updatePassengerStatement.setInt(3, departedStop != null ? departedStop.getId() : 0);
-            updatePassengerStatement.setInt(4, paymentMethod != null ? paymentMethod.getId() : 0);
-
-            int rowsAffected = updatePassengerStatement.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("Passenger added successfully to the database.");
-            } else {
-                System.out.println("Failed to insert passenger into the database.");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception
-        }
-
-    }
+    public Passenger(int id, Stop boardedStop, Stop departedStop, PaymentMethod paymentMethod, Connection connection) {
+        this.id = id;
+         this.boardedStop = boardedStop;
+         this.departedStop = departedStop;
+         this.paymentMethod = paymentMethod;
+ 
+         // Push the passenger variables to the database
+         String updatePassengerQuery = "INSERT INTO passenger (passenger_id, boarded_stop, departed_stop, payment_method) VALUES (?, ?, ?, ?)";
+         try (PreparedStatement updatePassengerStatement = connection.prepareStatement(updatePassengerQuery)) {
+             updatePassengerStatement.setInt(1, id);
+             updatePassengerStatement.setInt(2, boardedStop != null ? boardedStop.getId() : 0);
+             updatePassengerStatement.setInt(3, departedStop != null ? departedStop.getId() : 0);
+             updatePassengerStatement.setInt(4, paymentMethod != null ? paymentMethod.getId() : 0);
+ 
+             int rowsAffected = updatePassengerStatement.executeUpdate();
+             if (rowsAffected > 0) {
+                 System.out.println("Passenger added successfully to the database.");
+             } else {
+                 System.out.println("Failed to insert passenger into the database.");
+             }
+         } catch (SQLException e) {
+             e.printStackTrace(); // Handle the exception
+         }
+ 
+     }
     
     
     public Passenger(int passengerId, Connection connection) {
@@ -71,28 +69,6 @@ public class Passenger {
 
         } catch (SQLException e) {
             e.printStackTrace(); // Handle the exception according to your application's error handling strategy
-        }
-    }
-
-    public Passenger(Connection connection, int id, Stop boardedStop, Stop departedStop, PaymentMethod paymentMethod) {
-        Passenger newPassenger = new Passenger(id, boardedStop, departedStop, paymentMethod); // Create a local passenger object
-
-        // Push the passenger variables to the database
-        String updatePassengerQuery = "INSERT INTO passenger (passenger_id, boarded_stop, departed_stop, payment_method) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement updatePassengerStatement = connection.prepareStatement(updatePassengerQuery)) {
-            updatePassengerStatement.setInt(1, id);
-            updatePassengerStatement.setInt(2, boardedStop != null ? boardedStop.getId() : 0);
-            updatePassengerStatement.setInt(3, departedStop != null ? departedStop.getId() : 0);
-            updatePassengerStatement.setInt(4, paymentMethod != null ? paymentMethod.getId() : 0);
-
-            int rowsAffected = updatePassengerStatement.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("Passenger added successfully to the database.");
-            } else {
-                System.out.println("Failed to insert passenger into the database.");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception
         }
     }
     

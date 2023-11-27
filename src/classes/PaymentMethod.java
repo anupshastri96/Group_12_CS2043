@@ -1,4 +1,4 @@
-package miniproject;
+package classes;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,27 +14,6 @@ public class PaymentMethod {
         this.id = id;
         this.type = type;
         this.price = price;
-    }
- 
-    public PaymentMethod(Connection connection, int method_id) {
-        String query = "SELECT method_name, method_price FROM payment_method WHERE method_id = ?";
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setInt(1, method_id);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    this.id = method_id;
-                    this.type = resultSet.getString("method_name");
-                    this.price = resultSet.getDouble("method_price");
-                } else {
-                    // Handle the case where no data is found for the given paymentMethodId
-                    System.out.println("PaymentMethod with ID " + method_id + " not found in the database.");
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception 
-        }
     }
 
     public PaymentMethod(Connection connection, int id, String type, double price) {
@@ -57,6 +36,27 @@ public class PaymentMethod {
             }
         } catch (SQLException e) {
             e.printStackTrace(); // Handle the exception
+        }
+    }
+ 
+    public PaymentMethod(Connection connection, int method_id) {
+        String query = "SELECT method_name, method_price FROM payment_method WHERE method_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, method_id);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    this.id = method_id;
+                    this.type = resultSet.getString("method_name");
+                    this.price = resultSet.getDouble("method_price");
+                } else {
+                    // Handle the case where no data is found for the given paymentMethodId
+                    System.out.println("PaymentMethod with ID " + method_id + " not found in the database.");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle the exception 
         }
     }
     

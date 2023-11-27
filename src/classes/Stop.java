@@ -1,4 +1,4 @@
-package miniproject;
+package classes;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,28 +16,6 @@ public class Stop {
         this.location = location;
         this.expectedArrivalTime = expectedArrivalTime;
         
-    }
-    
- // Constructor that accesses the database directly
-    public Stop(Connection connection, int stopId) { //Not sure how to be handling the expected arrival times -Rusty
-        String query = "SELECT stop_location, arrival_time FROM stop WHERE stop_id = ?";
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setInt(1, stopId);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    this.id = stopId;
-                    this.location = resultSet.getString("stop_location");
-                    this.expectedArrivalTime = resultSet.getInt("arrival_time");
-                } else {
-                    // Handle the case where no data is found for the given stopId
-                    System.out.println("Stop with ID " + stopId + " not found in the database.");
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception
-        }
     }
 
     public Stop(Connection connection, int stopId, String location, int expectedArrivalTime) {
@@ -59,6 +37,28 @@ public class Stop {
                 System.out.println("Stop added to the database successfully.");
             } else {
                 System.out.println("Failed to add stop to the database.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle the exception
+        }
+    }
+    
+ // Constructor that accesses the database directly
+    public Stop(Connection connection, int stopId) { //Not sure how to be handling the expected arrival times -Rusty
+        String query = "SELECT stop_location, arrival_time FROM stop WHERE stop_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, stopId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    this.id = stopId;
+                    this.location = resultSet.getString("stop_location");
+                    this.expectedArrivalTime = resultSet.getInt("arrival_time");
+                } else {
+                    // Handle the case where no data is found for the given stopId
+                    System.out.println("Stop with ID " + stopId + " not found in the database.");
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace(); // Handle the exception

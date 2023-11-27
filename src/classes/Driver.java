@@ -1,4 +1,4 @@
-package miniproject;
+package classes;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,28 +14,6 @@ public class Driver {
         this.id = id;
         this.name = name;
         this.salary = salary;
-    }
-
-    // Database constructor
-    public Driver(int driverId, Connection connection) {
-        String query = "SELECT * FROM driver WHERE driver_id = ?";
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setInt(1, driverId);
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                this.id = resultSet.getInt("driver_id");
-                this.name = resultSet.getString("driver_name");
-                this.salary = resultSet.getDouble("driver_salary");
-            } else {
-                // Handle the case where no data is retrieved for the given driverId
-                System.out.println("Driver with ID " + driverId + " not found in the database.");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception 
-        }
     }
 
     public Driver(int id, String name, double salary, Connection connection) {
@@ -57,6 +35,28 @@ public class Driver {
             }
         } catch (SQLException e) {
             e.printStackTrace(); // Handle the exception
+        }
+    }
+
+    // Database constructor
+    public Driver(int driverId, Connection connection) {
+        String query = "SELECT * FROM driver WHERE driver_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, driverId);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                this.id = resultSet.getInt("driver_id");
+                this.name = resultSet.getString("driver_name");
+                this.salary = resultSet.getDouble("driver_salary");
+            } else {
+                // Handle the case where no data is retrieved for the given driverId
+                System.out.println("Driver with ID " + driverId + " not found in the database.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle the exception 
         }
     }
 
