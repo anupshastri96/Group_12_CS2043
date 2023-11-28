@@ -1,9 +1,10 @@
-package GUI;
+package src.GUI;
 
 import java.sql.Date;
 import java.sql.Timestamp;
 
 import javafx.application.Application;
+import src.classes.TestDriver;
 import util.SalesReportUtils;
 
 public class MainDriver {
@@ -13,13 +14,15 @@ public class MainDriver {
 		Date date = new Date((new Timestamp(System.currentTimeMillis()).getTime()));
 		
 		// Launch GUI
+		TestDriver hopes_and_dreams = new TestDriver();
+		hopes_and_dreams.main(args);
+		
 		BusTransitGUI gui = new BusTransitGUI();
 		Application.launch(gui.getClass(), args);
 		
-		// Launch secondary driver to mimic database updates
-		// ***
 		
-		// Generate daily sales report
-		SalesReportUtils.generateSalesReport(date);
+		
+		// Launch secondary driver to mimic database updates
+		
 	}
 }

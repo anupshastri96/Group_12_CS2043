@@ -1,4 +1,4 @@
-package classes;
+package src.classes;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,17 +29,19 @@ public class BusRoute {
         this.passengers = new ArrayList<>(); // Initialize the passenger list
     }
 
-	public BusRoute(int ID, Bus bus, Route route, Timestamp departureTime, Connection connection) {
+	public BusRoute(int ID, Bus bus, Route route, Connection connection) {
         this.id = ID;
         this.bus = bus;
         this.route = route;
         this.passengers = new ArrayList<>(); // Initialize the passenger list
 
         // Push the variables to the database
-        String insertQuery = "INSERT INTO bus_route (bus_id, route_id) VALUES (?, ?)";
+        String insertQuery = "INSERT INTO bus_route (bus_route_id, current_stop_id, bus_id, route_id) VALUES (?, ?, ?, ?)";
         try (PreparedStatement insertStatement = connection.prepareStatement(insertQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            insertStatement.setInt(1, bus.getId());
-            insertStatement.setInt(2, route.getId());
+        	insertStatement.setInt(1, ID);
+        	insertStatement.setInt(2, 0);
+            insertStatement.setInt(3, bus.getId());
+            insertStatement.setInt(4, route.getId());
 
             int rowsAffected = insertStatement.executeUpdate();
             if (rowsAffected <= 0) {
@@ -123,13 +125,30 @@ public class BusRoute {
 		return currentStopIndex;
 	}
 	
-	public void setCurrentStopIndex(int stopIndex) throws IllegalArgumentException {
-		if (id >= route.getStops().size()) {
+	public void setCurrentStopIndex(Connection connection, int stopIndex) throws IllegalArgumentException {
+		if (stopIndex >= route.getStops().size()) {
 			throw new IllegalArgumentException("Stop ID outside range of Stops on this Route");
 		} else {
+			
 			currentStopIndex = stopIndex;
+			 String updateQuery = "UPDATE bus_route SET current_stop_id = ? WHERE bus_route_id = ?";
+		        try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
+		            updateStatement.setInt(1, stopIndex); 
+		            updateStatement.setInt(2, this.id);
+
+		            int rowsAffected = updateStatement.executeUpdate();
+		            if (rowsAffected > 0) {
+		                System.out.println("Current stop index updated successfully in the database.");
+		            } else {
+		                System.out.println("Failed to update current stop index in the database.");
+		            }
+		        } catch (SQLException e) {
+		            e.printStackTrace(); // Handle the exception
+		        }
 		}
 	}
+	
+	
 	
 	public Timestamp getDepartureTime() {
 		return departureTime;

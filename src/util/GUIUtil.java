@@ -1,4 +1,4 @@
-package util;
+package src.util;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -8,9 +8,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import classes.Bus;
-import classes.BusRoute;
-import classes.Driver;
+import src.classes.Bus;
+import src.classes.BusRoute;
+import src.classes.Driver;
 
 public class GUIUtil {
 	
