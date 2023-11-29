@@ -111,11 +111,11 @@ public class TestDriver {
 
     private static PaymentMethod getRandomPaymentMethod(Connection connection) {
         //Add our db payment method retrival logic here 
-        String query = "select method_id from payment_method order by RAND() LIMIT 1";
+        String query = "select method_id from payment_method order by RAND() LIMIT 1"; // Query that returns a method ID
 
         try( PreparedStatement preparedStatement = connection.prepareStatement(query);
             
-            ResultSet resultSet = preparedStatement.executeQuery()){
+            ResultSet resultSet = preparedStatement.executeQuery()){ // Stores the result into the resultSet type object
             if(resultSet.next()){
                 int methodID= resultSet.getInt("method_id");
                 return new PaymentMethod(connection, methodID);
