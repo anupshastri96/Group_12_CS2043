@@ -125,6 +125,14 @@ public class BusRoute {
 		return currentStopIndex;
 	}
 	
+	public void setCurrentStopIndex(int stopIndex) throws IllegalArgumentException {
+		if (stopIndex >= route.getStops().size()) {
+			throw new IllegalArgumentException("Stop ID outside range of Stops on this Route");
+		} else {
+			currentStopIndex = stopIndex;
+		}
+	}
+	
 	public void setCurrentStopIndex(Connection connection, int stopIndex) throws IllegalArgumentException {
 		if (stopIndex >= route.getStops().size()) {
 			throw new IllegalArgumentException("Stop ID outside range of Stops on this Route");

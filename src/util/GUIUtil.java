@@ -22,10 +22,12 @@ public class GUIUtil {
 	
 	public boolean updates(ArrayList<BusRoute> newBusRoutes) {
 		if (busRoutes.size() != newBusRoutes.size()) {
+			busRoutes = newBusRoutes;
 			return true;
 		}
 		for (int i = 0; i < busRoutes.size(); i++) {
-			if (!busRoutes.get(i).getCurrentStop().equals(newBusRoutes.get(i).getCurrentStop())) {
+			if (busRoutes.get(i).getCurrentStopIndex() != (newBusRoutes.get(i).getCurrentStopIndex())) {
+				busRoutes = newBusRoutes;
 				return true;
 			}
 		}
@@ -45,7 +47,7 @@ public class GUIUtil {
 	    try {
 	    	connection = DriverManager.getConnection(URL, USER, PASSWORD);
 
-	    	String query = "SELECT bus_route_id, bus_id, driver_id " +
+	    	String query = "SELECT bus_route_id, bus_id, driver_id, current_stop_id " +
 	    			"FROM bus_route natural join bus " +
 	    			"WHERE depart_time >= ? AND depart_time < ?";
 	    	PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -58,6 +60,7 @@ public class GUIUtil {
 				Bus bus = new Bus(resultSet.getInt("bus_id"), driver);
 				BusRoute busRoute = new BusRoute(resultSet.getInt("bus_route_id"), connection);
 				busRoute.setBus(bus);
+				busRoute.setCurrentStopIndex(resultSet.getInt("current_stop_id"));
 				busRoutes.add(busRoute);
 			}
 

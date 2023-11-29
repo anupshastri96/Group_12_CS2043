@@ -76,6 +76,9 @@ public class TestDriver {
         return routes;
     }
 
+    // These updates should be done in a staggered manner - i.e. Route 1 updates to the next stop, then Route 2 at the next timer, etc. for more realistic live updating
+    // Refer to the Nov 23rd notes doc in the D5 folder on Teams for one way you could do this
+    
     private static void updateRoutes(BusRoute[] routes, Connection connection) {
     	int i = 0;
         for (BusRoute route : routes) {
@@ -91,6 +94,8 @@ public class TestDriver {
         }
     }
 
+    // Apparently this isn't actually adding passengers properly - this needs to be fixed
+    
     private static Passenger createNewPassenger(BusRoute route, Connection connection, int i) {
         //New passenger is created with a boarded stop being the current stop and a random payment method
         int passengerId = i; // Assign a unique passenger ID based on your logic
@@ -106,4 +111,6 @@ public class TestDriver {
         int randomMethodId = 1; // Replace with our logic to get a random payment method ID
         return new PaymentMethod(connection, randomMethodId);
     }
+    
+    // We need a cleanup method to remove everything we added to the database at the very end of running
 }

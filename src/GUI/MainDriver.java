@@ -17,12 +17,11 @@ public class MainDriver {
 		TestDriver hopes_and_dreams = new TestDriver();
 		hopes_and_dreams.main(args);
 		
+		// Launch secondary driver to mimic database updates
 		BusTransitGUI gui = new BusTransitGUI();
 		Application.launch(gui.getClass(), args);
 		
-		
-		
-		// Launch secondary driver to mimic database updates
-		
+		//Generate daily sales report
+		SalesReportUtils.generateSalesReport(date);
 	}
 }
