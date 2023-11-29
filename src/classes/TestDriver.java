@@ -82,19 +82,24 @@ public class TestDriver {
     // These updates should be done in a staggered manner - i.e. Route 1 updates to the next stop, then Route 2 at the next timer, etc. for more realistic live updating
     // Refer to the Nov 23rd notes doc in the D5 folder on Teams for one way you could do this
     
-    private static void updateRoutes(BusRoute[] routes, Connection connection) {
-    	int i = 0;
-        for (BusRoute route : routes) {
-            // Update the current stop to the next stop
-        
-            int nextStopIndex = (route.getCurrentStopIndex() + 1);//Someone needs to fix this pretty please (I'm going mentally insane :)
+     private static void updateRoutes(BusRoute[] routes, Connection connection) {
+        BusRoute route = routes[routeToUpdate];
+
+        // Update the current stop to the next stop if within the bounds
+        int nextStopIndex = route.getCurrentStopIndex() + 1;
+        if (nextStopIndex < route.getRoute().getStops().size()) {
             route.setCurrentStopIndex(connection, nextStopIndex);
 
-            // Adding at least one new passenger at every new stop
-            Passenger newPassenger = createNewPassenger(route, connection, i);
-            route.addPassenger(newPassenger);
-            i++;
+            // Adding random passengers at every new stop
+            int numberOfPassengers = (int) (Math.random() * 10) + 1;
+            for (int i = 0; i < numberOfPassengers; i++) {
+                Passenger newPassenger = createNewPassenger(route, connection, i);
+                route.addPassenger(newPassenger);
+            }
         }
+
+        // Update the route variable for the next iteration
+        routeToUpdate = (routeToUpdate + 1) % routes.length;
     }
 
     // Apparently this isn't actually adding passengers properly - this needs to be fixed
