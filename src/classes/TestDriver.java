@@ -20,6 +20,9 @@ public class TestDriver {
     private static final String PASSWORD = "e8X5f44Fl9";
     private static final int UPDATE_INTERVAL_SECONDS = 30;
 
+	// Declare routeToUpdate as a class-level variable
+    private static int routeToUpdate = 0;
+
     public static void main(String[] args) {
         // Connect to the database
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
