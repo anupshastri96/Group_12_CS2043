@@ -2,6 +2,7 @@ package src.classes;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.sql.Statement;
+import java.sql.ResultSet;
+
 
 public class TestDriver {
 	
@@ -107,9 +110,21 @@ public class TestDriver {
     }
 
     private static PaymentMethod getRandomPaymentMethod(Connection connection) {
-        //Add our db payment menthod retrival logic here 
-        int randomMethodId = 1; // Replace with our logic to get a random payment method ID
-        return new PaymentMethod(connection, randomMethodId);
+        //Add our db payment method retrival logic here 
+        String query = "select method_id from payment_method order by RAND() LIMIT 1";
+
+        try( PreparedStatement preparedStatement = connection.prepareStatement(query);
+            
+            ResultSet resultSet = preparedStatement.executeQuery()){
+            if(resultSet.next()){
+                int methodID= resultSet.getInt("method_id");
+                return new PaymentMethod(connection, methodID);
+            }
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
     }
     
     // We need a cleanup method to remove everything we added to the database at the very end of running
