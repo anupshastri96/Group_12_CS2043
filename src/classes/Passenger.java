@@ -68,7 +68,7 @@ public class Passenger {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception according to your application's error handling strategy
+            e.printStackTrace(); // Handle the exception
         }
     }
     
@@ -157,7 +157,7 @@ public class Passenger {
                 System.out.println("Failed to update stop in the database.");
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception according to your application's error handling strategy
+            e.printStackTrace(); // Handle the exception 
         }
     }
  
