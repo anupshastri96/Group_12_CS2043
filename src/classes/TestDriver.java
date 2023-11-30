@@ -109,32 +109,35 @@ public class TestDriver {
     // Apparently this isn't actually adding passengers properly - this needs to be fixed
     
     private static Passenger createNewPassenger(BusRoute route, Connection connection, int i) {
-        //New passenger is created with a boarded stop being the current stop and a random payment method
-        int passengerId = i; // Assign a unique passenger ID based on your logic
+        int passengerId = i;
         Stop boardedStop = route.getCurrentStop();
-        Stop departedStop = null; // Passenger has not departed yet
-        PaymentMethod paymentMethod = getRandomPaymentMethod(connection);
-
-        return new Passenger(passengerId, boardedStop, departedStop, paymentMethod);
+        Stop departedStop = null;
+        
+        try {
+            PaymentMethod paymentMethod = getRandomPaymentMethod(connection);
+            return new Passenger(passengerId, boardedStop, departedStop, paymentMethod);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
-
-    private static PaymentMethod getRandomPaymentMethod(Connection connection) {
-        //Add our db payment method retrival logic here 
-        String query = "select method_id from payment_method order by RAND() LIMIT 1"; // Query that returns a method ID
-
-        try( PreparedStatement preparedStatement = connection.prepareStatement(query);
-            
-            ResultSet resultSet = preparedStatement.executeQuery()){ // Stores the result into the resultSet type object
-            if(resultSet.next()){
-                int methodID= resultSet.getInt("method_id");
+    
+    private static PaymentMethod getRandomPaymentMethod(Connection connection) throws SQLException {
+        String query = "select method_id from payment_method order by RAND() LIMIT 1";
+    
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            if (resultSet.next()) {
+                int methodID = resultSet.getInt("method_id");
                 return new PaymentMethod(connection, methodID);
             }
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
+            throw e; // Re-throw the exception to indicate failure
         }
         return null;
     }
+    
     
     // We need a cleanup method to remove everything we added to the database at the very end of running
        private static void cleanupData() {
