@@ -38,9 +38,12 @@ public class TestDriver {
 			}, 5, UPDATE_INTERVAL_SECONDS, TimeUnit.SECONDS);
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-      
+        } finally {
+            // Clean up data at the end
+            cleanupData();
+     }
     }
+	
     private static void deleteFromRouteStop(Connection connection) throws SQLException {
         try (Statement statement = connection.createStatement()) {
             String sql = "DELETE FROM `sql9657484`.`route_stop` WHERE stop_id < 28";
@@ -56,8 +59,6 @@ public class TestDriver {
             System.out.println("Rows deleted from stop table.");
         }
     }
-
-   
 
     private static BusRoute[] createSampleRoutes(Connection connection) {
         BusRoute[] routes = new BusRoute[9]; //Total of 9 routes 
@@ -136,4 +137,13 @@ public class TestDriver {
     }
     
     // We need a cleanup method to remove everything we added to the database at the very end of running
+       private static void cleanupData() {
+        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
+            deleteFromRouteStop(connection);
+            deleteFromStop(connection);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
+
