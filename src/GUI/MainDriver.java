@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 
 import javafx.application.Application;
 import src.classes.TestDriver;
-import util.SalesReportUtils;
+import src.util.SalesReportUtils;
 
 public class MainDriver {
 	
@@ -20,8 +20,8 @@ public class MainDriver {
 		// Launch secondary driver to mimic database updates
 		BusTransitGUI gui = new BusTransitGUI();
 		Application.launch(gui.getClass(), args);
-		
+		SalesReportUtils Amongus = new SalesReportUtils();
 		//Generate daily sales report
-		SalesReportUtils.generateSalesReport(date);
+		Amongus.generateSalesReport(date);
 	}
 }
