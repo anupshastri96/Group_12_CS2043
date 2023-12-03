@@ -29,9 +29,13 @@ public class TestDriver {
 				try {
 					updateRoutes(routes, DriverManager.getConnection(URL, USER, PASSWORD));
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				catch (Exception e) {
+					System.out.println("I broke");
+
+				}
+				
 			}, 10, UPDATE_INTERVAL_SECONDS, TimeUnit.SECONDS);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -73,7 +77,6 @@ public class TestDriver {
             Route route = new Route(connection, i, "Route " + (i), stops);
             BusRoute busRoute = new BusRoute(i, bus, route, connection);
             routes[i] = busRoute;
-            System.out.println(routes[i].getRoute().getStops().size());
         }
 
         return routes;
@@ -83,10 +86,9 @@ public class TestDriver {
     // Refer to the Nov 23rd notes doc in the D5 folder on Teams for one way you could do this
     
     private static void updateRoutes(BusRoute[] routes, Connection connection) {
-        for (BusRoute route : routes) {
-        	 int random = new Random().nextInt(10);
+    	
+        	BusRoute route = routes[new Random().nextInt(routes.length)];
         	
-        	 if (random % 2 > 0) {
             int nextStopIndex = (route.getCurrentStopIndex() + 1);//Someone needs to fix this pretty please (I'm going mentally insane :)
             route.setCurrentStopIndex(connection, nextStopIndex);
 
@@ -94,8 +96,8 @@ public class TestDriver {
             Passenger newPassenger = createNewPassenger(route, connection);
             route.addPassenger(newPassenger);
             passengers++;
-        	 }
-        }
+        	 
+   
     }
 
     // Apparently this isn't actually adding passengers properly - this needs to be fixed

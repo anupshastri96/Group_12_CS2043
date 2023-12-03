@@ -35,11 +35,12 @@ public class MainDriver {
         	Statement statement = connection.createStatement();
 
             // Execute SQL statements
+            statement.executeUpdate("delete from `sql9657484`.`bus_route_passenger` where passenger_id < 120");
+
             statement.executeUpdate("delete from `sql9657484`.`passenger` where passenger_id < 120");
             statement.executeUpdate("delete from `sql9657484`.`route_stop` where stop_id < 280");
             statement.executeUpdate("delete from `sql9657484`.`stop` where stop_id < 280");
             statement.executeUpdate("delete from `sql9657484`.`bus_route` where bus_route_id < 2001");
-            statement.executeUpdate("delete from `sql9657484`.`bus_route_passenger` where passenger_id < 120");
             statement.executeUpdate("delete from `sql9657484`.`bus` where bus_id < 100");
             statement.executeUpdate("delete from `sql9657484`.`route` where route_id < 100");
             statement.executeUpdate("delete from `sql9657484`.`driver` where driver_id < 100");
