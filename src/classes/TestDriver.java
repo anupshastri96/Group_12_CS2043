@@ -2,7 +2,6 @@ package src.classes;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -10,7 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.sql.Statement;
-import java.sql.ResultSet;
+import java.util.Random;
 
 
 public class TestDriver {
@@ -19,9 +18,7 @@ public class TestDriver {
     private static final String USER = "sql9657484";
     private static final String PASSWORD = "e8X5f44Fl9";
     private static final int UPDATE_INTERVAL_SECONDS = 30;
-
-	// Declare routeToUpdate as a class-level variable
-    private static int routeToUpdate = 0;
+    private static int passengers = 0;
 
     public static void main(String[] args) {
         // Connect to the database
@@ -35,15 +32,12 @@ public class TestDriver {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}, 5, UPDATE_INTERVAL_SECONDS, TimeUnit.SECONDS);
+			}, 10, UPDATE_INTERVAL_SECONDS, TimeUnit.SECONDS);
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            // Clean up data at the end
-            cleanupData();
-     }
+        } 
+      
     }
-	
     private static void deleteFromRouteStop(Connection connection) throws SQLException {
         try (Statement statement = connection.createStatement()) {
             String sql = "DELETE FROM `sql9657484`.`route_stop` WHERE stop_id < 28";
@@ -60,13 +54,15 @@ public class TestDriver {
         }
     }
 
+   
+
     private static BusRoute[] createSampleRoutes(Connection connection) {
         BusRoute[] routes = new BusRoute[9]; //Total of 9 routes 
 
         // Create and add routes to the array
         for (int i = 0; i < 9; i++) {
             Driver driver = new Driver( i + 1, "Driver " + (i + 1), 50000.0, connection);
-            Bus bus = new Bus(i + 1, driver);
+            Bus bus = new Bus(driver,i + 1,  connection);
 
             // Assuming there are 3 stops for each route
             ArrayList<Stop> stops = new ArrayList<>();
@@ -86,67 +82,39 @@ public class TestDriver {
     // These updates should be done in a staggered manner - i.e. Route 1 updates to the next stop, then Route 2 at the next timer, etc. for more realistic live updating
     // Refer to the Nov 23rd notes doc in the D5 folder on Teams for one way you could do this
     
-     private static void updateRoutes(BusRoute[] routes, Connection connection) {
-        BusRoute route = routes[routeToUpdate];
-
-        // Update the current stop to the next stop if within the bounds
-        int nextStopIndex = route.getCurrentStopIndex() + 1;
-        if (nextStopIndex < route.getRoute().getStops().size()) {
+    private static void updateRoutes(BusRoute[] routes, Connection connection) {
+        for (BusRoute route : routes) {
+        	 int random = new Random().nextInt(10);
+        	
+        	 if (random % 2 > 0) {
+            int nextStopIndex = (route.getCurrentStopIndex() + 1);//Someone needs to fix this pretty please (I'm going mentally insane :)
             route.setCurrentStopIndex(connection, nextStopIndex);
 
-            // Adding random passengers at every new stop
-            int numberOfPassengers = (int) (Math.random() * 10) + 1;
-            for (int i = 0; i < numberOfPassengers; i++) {
-                Passenger newPassenger = createNewPassenger(route, connection, i);
-                route.addPassenger(newPassenger);
-            }
+            // Adding at least one new passenger at every new stop
+            Passenger newPassenger = createNewPassenger(route, connection);
+            route.addPassenger(newPassenger);
+            passengers++;
+        	 }
         }
-
-        // Update the route variable for the next iteration
-        routeToUpdate = (routeToUpdate + 1) % routes.length;
     }
 
     // Apparently this isn't actually adding passengers properly - this needs to be fixed
     
-    private static Passenger createNewPassenger(BusRoute route, Connection connection, int i) {
-        int passengerId = i;
+    private static Passenger createNewPassenger(BusRoute route, Connection connection) {
+        //New passenger is created with a boarded stop being the current stop and a random payment method
+        int passengerId = passengers; // Assign a unique passenger ID based on your logic
         Stop boardedStop = route.getCurrentStop();
-        Stop departedStop = null;
-        
-        try {
-            PaymentMethod paymentMethod = getRandomPaymentMethod(connection);
-            return new Passenger(passengerId, boardedStop, departedStop, paymentMethod);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+        Stop departedStop = route.getCurrentStop(); // Passenger has not departed yet
+        PaymentMethod paymentMethod = getRandomPaymentMethod(connection);
+
+        return new Passenger(passengerId, boardedStop,route, departedStop, paymentMethod, connection);
     }
-    
-    private static PaymentMethod getRandomPaymentMethod(Connection connection) throws SQLException {
-        String query = "select method_id from payment_method order by RAND() LIMIT 1";
-    
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-            if (resultSet.next()) {
-                int methodID = resultSet.getInt("method_id");
-                return new PaymentMethod(connection, methodID);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e; // Re-throw the exception to indicate failure
-        }
-        return null;
+
+    private static PaymentMethod getRandomPaymentMethod(Connection connection) {
+        //Add our db payment menthod retrival logic here 
+        int randomMethodId = new Random().nextInt(3) +1 ; // Replace with our logic to get a random payment method ID
+        return new PaymentMethod(connection, randomMethodId);
     }
-    
     
     // We need a cleanup method to remove everything we added to the database at the very end of running
-       private static void cleanupData() {
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
-            deleteFromRouteStop(connection);
-            deleteFromStop(connection);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 }
-
