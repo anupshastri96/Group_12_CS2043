@@ -89,7 +89,6 @@ public class BusRoute {
             while (passengersResultSet.next()) {
                 int passengerId = passengersResultSet.getInt("passenger_id");
 
-                // Create Passenger objects based on the available constructors
                 Passenger passenger = new Passenger(passengerId, connection);
 
                 passengersList.add(passenger);

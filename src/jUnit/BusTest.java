@@ -1,4 +1,4 @@
-package jUnit;
+package src.jUnit;
  
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,8 +10,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import classes.Bus;
-import classes.Driver;
+import src.classes.Bus;
+import src.classes.Driver;
  
 class BusTest {
  

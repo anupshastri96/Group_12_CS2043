@@ -9,13 +9,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.sql.Statement;
+import java.util.Random;
+
 
 public class TestDriver {
 	
 	private static final String URL = "jdbc:mysql://sql9.freesqldatabase.com:3306/sql9657484";
     private static final String USER = "sql9657484";
     private static final String PASSWORD = "e8X5f44Fl9";
-    private static final int UPDATE_INTERVAL_SECONDS = 30;
+    private static final int UPDATE_INTERVAL_SECONDS = 10;
+    private static int passengers = 0;
 
     public static void main(String[] args) {
         // Connect to the database
@@ -26,13 +29,16 @@ public class TestDriver {
 				try {
 					updateRoutes(routes, DriverManager.getConnection(URL, USER, PASSWORD));
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}, 5, UPDATE_INTERVAL_SECONDS, TimeUnit.SECONDS);
+				catch (Exception e) {
+
+				}
+				
+			}, 10, UPDATE_INTERVAL_SECONDS, TimeUnit.SECONDS);
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        } 
       
     }
     private static void deleteFromRouteStop(Connection connection) throws SQLException {
@@ -59,7 +65,7 @@ public class TestDriver {
         // Create and add routes to the array
         for (int i = 0; i < 9; i++) {
             Driver driver = new Driver( i + 1, "Driver " + (i + 1), 50000.0, connection);
-            Bus bus = new Bus(i + 1, driver);
+            Bus bus = new Bus(driver,i + 1,  connection);
 
             // Assuming there are 3 stops for each route
             ArrayList<Stop> stops = new ArrayList<>();
@@ -70,7 +76,6 @@ public class TestDriver {
             Route route = new Route(connection, i, "Route " + (i), stops);
             BusRoute busRoute = new BusRoute(i, bus, route, connection);
             routes[i] = busRoute;
-            System.out.println(routes[i].getRoute().getStops().size());
         }
 
         return routes;
@@ -80,35 +85,35 @@ public class TestDriver {
     // Refer to the Nov 23rd notes doc in the D5 folder on Teams for one way you could do this
     
     private static void updateRoutes(BusRoute[] routes, Connection connection) {
-    	int i = 0;
-        for (BusRoute route : routes) {
-            // Update the current stop to the next stop
-        
+    	
+        	BusRoute route = routes[new Random().nextInt(routes.length)];
+        	
             int nextStopIndex = (route.getCurrentStopIndex() + 1);//Someone needs to fix this pretty please (I'm going mentally insane :)
             route.setCurrentStopIndex(connection, nextStopIndex);
 
             // Adding at least one new passenger at every new stop
-            Passenger newPassenger = createNewPassenger(route, connection, i);
+            Passenger newPassenger = createNewPassenger(route, connection);
             route.addPassenger(newPassenger);
-            i++;
-        }
+            passengers++;
+        	 
+   
     }
 
     // Apparently this isn't actually adding passengers properly - this needs to be fixed
     
-    private static Passenger createNewPassenger(BusRoute route, Connection connection, int i) {
+    private static Passenger createNewPassenger(BusRoute route, Connection connection) {
         //New passenger is created with a boarded stop being the current stop and a random payment method
-        int passengerId = i; // Assign a unique passenger ID based on your logic
+        int passengerId = passengers; // Assign a unique passenger ID based on your logic
         Stop boardedStop = route.getCurrentStop();
-        Stop departedStop = null; // Passenger has not departed yet
+        Stop departedStop = route.getCurrentStop(); // Passenger has not departed yet
         PaymentMethod paymentMethod = getRandomPaymentMethod(connection);
 
-        return new Passenger(passengerId, boardedStop, departedStop, paymentMethod);
+        return new Passenger(passengerId, boardedStop,route, departedStop, paymentMethod, connection);
     }
 
     private static PaymentMethod getRandomPaymentMethod(Connection connection) {
         //Add our db payment menthod retrival logic here 
-        int randomMethodId = 1; // Replace with our logic to get a random payment method ID
+        int randomMethodId = new Random().nextInt(3) +1 ; // Replace with our logic to get a random payment method ID
         return new PaymentMethod(connection, randomMethodId);
     }
     

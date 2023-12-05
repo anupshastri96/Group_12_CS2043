@@ -1,4 +1,4 @@
-package jUnit;
+package src.jUnit;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,13 +6,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import classes.Bus;
-import classes.BusRoute;
-import classes.Driver;
-import classes.Passenger;
-import classes.PaymentMethod;
-import classes.Route;
-import classes.Stop;
+import src.classes.Bus;
+import src.classes.BusRoute;
+import src.classes.Driver;
+import src.classes.Passenger;
+import src.classes.PaymentMethod;
+import src.classes.Route;
+import src.classes.Stop;
 
 public class DBTest {
     public static void main(String[] args) {

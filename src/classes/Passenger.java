@@ -19,19 +19,20 @@ public class Passenger {
         this.paymentMethod = paymentMethod;
     }
 
-    public Passenger(int id, Stop boardedStop, Stop departedStop, PaymentMethod paymentMethod, Connection connection) {
+    public Passenger(int id, Stop boardedStop, BusRoute bus, Stop departedStop, PaymentMethod paymentMethod, Connection connection) {
         this.id = id;
          this.boardedStop = boardedStop;
          this.departedStop = departedStop;
          this.paymentMethod = paymentMethod;
  
          // Push the passenger variables to the database
-         String updatePassengerQuery = "INSERT INTO passenger (passenger_id, boarded_stop, departed_stop, payment_method) VALUES (?, ?, ?, ?)";
+         String updatePassengerQuery = "INSERT INTO passenger (passenger_id, boarded_stop, bus_route_id, departed_stop, payment_method) VALUES (?, ?, ?, ?, ?)";
          try (PreparedStatement updatePassengerStatement = connection.prepareStatement(updatePassengerQuery)) {
              updatePassengerStatement.setInt(1, id);
              updatePassengerStatement.setInt(2, boardedStop != null ? boardedStop.getId() : 0);
-             updatePassengerStatement.setInt(3, departedStop != null ? departedStop.getId() : 0);
-             updatePassengerStatement.setInt(4, paymentMethod != null ? paymentMethod.getId() : 0);
+             updatePassengerStatement.setInt(3, bus != null ? bus.getId() : 0);
+             updatePassengerStatement.setInt(4, departedStop != null ? departedStop.getId() : 0);
+             updatePassengerStatement.setInt(5, paymentMethod != null ? paymentMethod.getId() : 0);
  
              int rowsAffected = updatePassengerStatement.executeUpdate();
              if (rowsAffected > 0) {
@@ -67,7 +68,7 @@ public class Passenger {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception according to your application's error handling strategy
+            e.printStackTrace(); // Handle the exception
         }
     }
     
@@ -156,7 +157,7 @@ public class Passenger {
                 System.out.println("Failed to update stop in the database.");
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception according to your application's error handling strategy
+            e.printStackTrace(); // Handle the exception 
         }
     }
  
