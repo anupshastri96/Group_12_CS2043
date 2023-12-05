@@ -17,7 +17,9 @@ public class TestDriver {
 	private static final String URL = "jdbc:mysql://sql9.freesqldatabase.com:3306/sql9657484";
     private static final String USER = "sql9657484";
     private static final String PASSWORD = "e8X5f44Fl9";
+
     private static final int UPDATE_INTERVAL_SECONDS = 10;
+
     private static int passengers = 0;
 
     public static void main(String[] args) {
@@ -30,9 +32,6 @@ public class TestDriver {
 					updateRoutes(routes, DriverManager.getConnection(URL, USER, PASSWORD));
 				} catch (SQLException e) {
 					e.printStackTrace();
-				}
-				catch (Exception e) {
-
 				}
 				
 			}, 10, UPDATE_INTERVAL_SECONDS, TimeUnit.SECONDS);

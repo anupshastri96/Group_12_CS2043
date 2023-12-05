@@ -1,0 +1,71 @@
+Daily Sales Report 2023-12-02
+
+Route					Departure Time			Cash			Credit			Debit			Total
+Route 0					2023-12-02 19:17:20		1				0				1				2
+Route 1					2023-12-02 19:17:20		0				0				1				1
+Route 2					2023-12-02 19:17:20		2				0				0				2
+Route 3					2023-12-02 19:17:20		1				1				0				2
+Route 4					2023-12-02 19:17:21		1				0				0				1
+Route 5					2023-12-02 19:16:50		0				1				0				1
+Route 6					2023-12-02 19:17:21		1				1				0				2
+Route 7					2023-12-02 19:17:21		1				0				0				1
+
+Total											7				3				2				12
+
+
+Route 0	2023-12-02 19:17:20						Cash			Credit			Debit			Total
+Stop 2											0				0				1				1
+Stop 3											1				0				0				1
+
+Total											1				0				1				2
+
+
+Route 1	2023-12-02 19:17:20						Cash			Credit			Debit			Total
+Stop 5											0				0				1				1
+
+Total											0				0				1				1
+
+
+Route 2	2023-12-02 19:17:20						Cash			Credit			Debit			Total
+Stop 8											1				0				0				1
+Stop 9											1				0				0				1
+
+Total											2				0				0				2
+
+
+Route 3	2023-12-02 19:17:20						Cash			Credit			Debit			Total
+Stop 12											0				1				0				1
+Stop 11											1				0				0				1
+
+Total											1				1				0				2
+
+
+Route 4	2023-12-02 19:17:21						Cash			Credit			Debit			Total
+Stop 14											1				0				0				1
+
+Total											1				0				0				1
+
+
+Route 5	2023-12-02 19:16:50						Cash			Credit			Debit			Total
+Stop 17											0				1				0				1
+
+Total											0				1				0				1
+
+
+Route 6	2023-12-02 19:17:21						Cash			Credit			Debit			Total
+Stop 21											0				1				0				1
+Stop 20											1				0				0				1
+
+Total											1				1				0				2
+
+
+Route 7	2023-12-02 19:17:21						Cash			Credit			Debit			Total
+Stop 23											1				0				0				1
+
+Total											1				0				0				1
+
+
+Route 8	2023-12-02 19:16:40						Cash			Credit			Debit			Total
+0
+
+Total											0				0				0				0
