@@ -1,4 +1,4 @@
-package GUI;
+package src.GUI;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -15,11 +15,11 @@ import javafx.event.EventHandler;
 
 import java.util.ArrayList;
 
-import classes.BusRoute;
-import classes.Stop;
+import src.classes.BusRoute;
+import src.classes.Stop;
 
 import javafx.util.Duration;
-import util.GUIUtil;
+import src.util.GUIUtil;
 
 import java.sql.Date;
 import java.sql.Timestamp;

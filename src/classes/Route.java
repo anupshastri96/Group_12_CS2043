@@ -1,4 +1,4 @@
-package classes;
+package src.classes;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -96,7 +96,7 @@ public class Route {
             this.stops = stopsList;
 
         } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception according to your application's error handling strategy
+            e.printStackTrace(); // Handle the exception 
         }
     }
 
